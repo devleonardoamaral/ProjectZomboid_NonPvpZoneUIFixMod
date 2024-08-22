@@ -1,8 +1,15 @@
+-- ┓ ┏┓┏┓┳┓┏┓┳┓┳┓┏┓  ┏┓┳┳┓┏┓┳┓┏┓┓ 
+-- ┃ ┣ ┃┃┃┃┣┫┣┫┃┃┃┃  ┣┫┃┃┃┣┫┣┫┣┫┃ 
+-- ┗┛┗┛┗┛┛┗┛┗┛┗┻┛┗┛  ┛┗┛ ┗┛┗┛┗┛┗┗┛
+-- Modified: 22/08/2024, 12:30 (UTC/GMT -03:00) 
+-- Version: 2.0
+
+-- Relevant console commands:
+-- - reloadLuaFile("nonpvpzoneuifix/media/lua/client/ISUI/AdminPanel/ISAddNonPvpZoneUI.lua")
+
 require "ISUI/AdminPanel/ISLabel"
--- reloadLuaFile("nonpvpzoneuifix/media/lua/client/ISUI/AdminPanel/ISAddNonPvpZoneUI.lua")
 
 ISAddNonPvpZoneUI = ISPanel:derive("ISAddNonPvpZoneUI")
-
 ISAddNonPvpZoneUI.FONT_HGT_SMALL = getTextManager():getFontHeight(UIFont.Small)
 ISAddNonPvpZoneUI.FONT_HGT_MEDIUM = getTextManager():getFontHeight(UIFont.Medium)
 ISAddNonPvpZoneUI.MAX_RENDER_DISTANCE = 101
