@@ -1,11 +1,12 @@
 require "ISUI/AdminPanel/ISLabel"
+-- reloadLuaFile("nonpvpzoneuifix/media/lua/client/ISUI/AdminPanel/ISAddNonPvpZoneUI.lua")
 
 ISAddNonPvpZoneUI = ISPanel:derive("ISAddNonPvpZoneUI")
 
-local FONT_HGT_SMALL = getTextManager():getFontHeight(UIFont.Small)
-local FONT_HGT_MEDIUM = getTextManager():getFontHeight(UIFont.Medium)
-local MAX_RENDER_DISTANCE = 101
-local DEFAULT_RENDER_DISTANCE = 60
+ISAddNonPvpZoneUI.FONT_HGT_SMALL = getTextManager():getFontHeight(UIFont.Small)
+ISAddNonPvpZoneUI.FONT_HGT_MEDIUM = getTextManager():getFontHeight(UIFont.Medium)
+ISAddNonPvpZoneUI.MAX_RENDER_DISTANCE = 101
+ISAddNonPvpZoneUI.DEFAULT_RENDER_DISTANCE = 60
 
 local function calculateEuclideanDistance(x1, y1, x2, y2)
     return math.sqrt((x2 - x1)^2 + (y2 - y1)^2)
@@ -18,38 +19,69 @@ end
 function ISAddNonPvpZoneUI:initialise()
     ISPanel.initialise(self)
 
-    local btnLabel_ok = getText("IGUI_PvpZone_AddZone")
-    local btnLabel_cancel = getText("UI_Cancel")
-    local btnLabel_redefine = getText("IGUI_PvpZone_RedefineStartingPoint")
-
-    --local btnTextWidth_ok= getTextManager():MeasureStringX(UIFont.Small, btnLabel_ok)
-    --local btnTextWidth_cancel = getTextManager():MeasureStringX(UIFont.Small, btnLabel_cancel)
-    local btnTextWidth_redefine = getTextManager():MeasureStringX(UIFont.Small, btnLabel_redefine)
-
+    local borderPad = 20
+    local bottonBorderPad = 10
     local btnWidth = 100
-    local btnHeight = FONT_HGT_SMALL + 3 * 2
+    local btnHeight = ISAddNonPvpZoneUI.FONT_HGT_SMALL + 3 * 2
+    local btnPad = 10
+    local z = 20
 
-    local btnWidth_ok = btnWidth
-    local btnWidth_cancel = btnWidth
-    local btnWidth_redefine = btnTextWidth_redefine + 3 * 2
+    local lblTitle_text = string.upper(getText("IGUI_PvpZone_AddZone"))
+    self.lblTitle = ISLabel:new(self:getWidth() / 2, z, ISAddNonPvpZoneUI.FONT_HGT_MEDIUM, lblTitle_text, 1, 1, 1, 1, UIFont.Medium, true)
+    self.lblTitle:initialise()
+    self.lblTitle.center = true
+    self:addChild(self.lblTitle)
 
-    local btnHeight_ok = btnHeight
-    local btnHeight_cancel = btnHeight
-    local btnHeight_redefine = btnHeight
+    z = z + ISAddNonPvpZoneUI.FONT_HGT_MEDIUM + 20
 
-    local btnPadX = 10
-    local btnPadY = 10
+    local lblName_text = getText("IGUI_PvpZone_ZoneName")
+    self.lblName = ISLabel:new(borderPad, z, ISAddNonPvpZoneUI.FONT_HGT_SMALL, lblName_text, 1, 1, 1, 1, UIFont.Small, true)
+    self.lblName:initialise()
+    self:addChild(self.lblName)
 
-    local btnPosX_ok = btnPadX
-    local btnPosY_ok = self:getHeight() - btnPadY - btnHeight
+    local entryBoxText_title = "Zone #" .. NonPvpZone.getAllZones():size() + 1
+    self.entryBoxTitle = ISTextEntryBox:new(entryBoxText_title, self:getWidth()/2, z, self:getWidth()/2 - borderPad, ISAddNonPvpZoneUI.FONT_HGT_SMALL)
+    self.entryBoxTitle:initialise()
+    self.entryBoxTitle:instantiate()
+    self:addChild(self.entryBoxTitle)
 
-    local btnPosX_cancel = self:getWidth() - btnPadX - btnWidth_cancel
-    local btnPosY_cancel = self:getHeight() - btnPadY - btnHeight
+    z = z + ISAddNonPvpZoneUI.FONT_HGT_SMALL + 15
 
-    local btnPosX_redefine = self:getWidth() - 2 * btnPadX - btnWidth_cancel - btnWidth_redefine
-    local btnPosY_redefine = self:getHeight() - btnPadY - btnHeight
+    local lblStatingPoint_text = getText("IGUI_PvpZone_StartingPoint")
+    self.lblStartingPoint = ISLabel:new(borderPad, z, ISAddNonPvpZoneUI.FONT_HGT_SMALL, lblStatingPoint_text, 1, 1, 1, 1, UIFont.Small, true)
+    self.lblStartingPoint:initialise()
+    self:addChild(self.lblStartingPoint)
 
-    self.btnOk = ISButton:new(btnPosX_ok, btnPosY_ok, btnWidth_ok, btnHeight_ok, btnLabel_ok, self, ISAddNonPvpZoneUI.onClick)
+    self.lblStartingPointInfo = ISLabel:new(self:getWidth()/2, z, ISAddNonPvpZoneUI.FONT_HGT_SMALL, "x = ----- , y = -----", 1, 1, 1, 1, UIFont.Small, true)
+    self.lblStartingPointInfo:initialise()
+    self:addChild(self.lblStartingPointInfo)
+
+    z = z + ISAddNonPvpZoneUI.FONT_HGT_SMALL + 15
+
+    local lblCurrentPoint_text = getText("IGUI_PvpZone_CurrentPoint")
+    self.lblCurrentPoint = ISLabel:new(borderPad, z, ISAddNonPvpZoneUI.FONT_HGT_SMALL, lblCurrentPoint_text, 1, 1, 1, 1, UIFont.Small, true)
+    self.lblCurrentPoint:initialise()
+    self:addChild(self.lblCurrentPoint)
+
+    self.lblCurrentPointInfo = ISLabel:new(self:getWidth()/2, z, ISAddNonPvpZoneUI.FONT_HGT_SMALL, "x = ----- , y = -----", 1, 1, 1, 1, UIFont.Small, true)
+    self.lblCurrentPointInfo:initialise()
+    self:addChild(self.lblCurrentPointInfo)
+
+    z = z + ISAddNonPvpZoneUI.FONT_HGT_SMALL + 15
+
+    local lblCurrentSize_text = getText("IGUI_PvpZone_CurrentZoneSize")
+    self.lblCurrentSize = ISLabel:new(borderPad, z, ISAddNonPvpZoneUI.FONT_HGT_SMALL, lblCurrentSize_text, 1, 1, 1, 1, UIFont.Small, true)
+    self.lblCurrentSize:initialise()
+    self:addChild(self.lblCurrentSize)
+
+    self.lblCurrentSizeInfo = ISLabel:new(self:getWidth()/2, z, ISAddNonPvpZoneUI.FONT_HGT_SMALL, "------", 1, 1, 1, 1, UIFont.Small, true)
+    self.lblCurrentSizeInfo:initialise()
+    self:addChild(self.lblCurrentSizeInfo)
+
+    z = z + ISAddNonPvpZoneUI.FONT_HGT_SMALL + 15
+
+    local btnLbtnOk_text = getText("IGUI_PvpZone_AddZone")
+    self.btnOk = ISButton:new(borderPad, self:getHeight() - bottonBorderPad - btnHeight, btnWidth, btnHeight, btnLbtnOk_text, self, ISAddNonPvpZoneUI.onClick)
     self.btnOk.internal = "OK"
     self.btnOk.anchorTop = true
     self.btnOk.anchorBottom = false
@@ -58,13 +90,8 @@ function ISAddNonPvpZoneUI:initialise()
     self.btnOk.borderColor = {r=1, g=1, b=1, a=0.1}
     self:addChild(self.btnOk)
 
-    self.btnOk.infos = {}
-    self.btnOk.infos.posX = btnPosX_ok
-    self.btnOk.infos.posY = btnPosY_ok
-    self.btnOk.infos.width = btnWidth_ok
-    self.btnOk.infos.height = btnHeight_ok
-
-    self.btnCancel = ISButton:new(btnPosX_cancel, btnPosY_cancel, btnWidth_cancel, btnHeight_cancel, btnLabel_cancel, self, ISAddNonPvpZoneUI.onClick)
+    local btnCancel_text = getText("UI_Cancel")
+    self.btnCancel = ISButton:new(self:getWidth() - borderPad - btnWidth, self:getHeight() - bottonBorderPad - btnHeight, btnWidth, btnHeight, btnCancel_text, self, ISAddNonPvpZoneUI.onClick)
     self.btnCancel.internal = "CANCEL"
     self.btnCancel.anchorTop = true
     self.btnCancel.anchorBottom = false
@@ -73,13 +100,10 @@ function ISAddNonPvpZoneUI:initialise()
     self.btnCancel.borderColor = {r=1, g=1, b=1, a=0.1}
     self:addChild(self.btnCancel)
 
-    self.btnCancel.infos = {}
-    self.btnCancel.infos.posX = btnPosX_cancel
-    self.btnCancel.infos.posX = btnPosY_cancel
-    self.btnCancel.infos.posX = btnWidth_cancel
-    self.btnCancel.infos.posX = btnHeight_cancel
-
-    self.btnRedefine = ISButton:new(btnPosX_redefine, btnPosY_redefine, btnWidth_redefine, btnHeight_redefine, btnLabel_redefine, self, ISAddNonPvpZoneUI.onClick)
+    local btnRedefine_text = getText("IGUI_PvpZone_RedefineStartingPoint")
+    local btnRedefine_textSize = getTextManager():MeasureStringX(UIFont.Small, btnRedefine_text)
+    local btnRedefine_size = btnRedefine_textSize + 3 * 2
+    self.btnRedefine = ISButton:new(self:getWidth() - btnRedefine_size - btnPad - self.btnCancel:getWidth() - borderPad, self:getHeight() - bottonBorderPad - btnHeight, btnRedefine_size, btnHeight, btnRedefine_text, self, ISAddNonPvpZoneUI.onClick)
     self.btnRedefine.internal = "DEFINESTARTINGPOINT"
     self.btnRedefine.anchorTop = true
     self.btnRedefine.anchorBottom = false
@@ -88,70 +112,36 @@ function ISAddNonPvpZoneUI:initialise()
     self.btnRedefine.borderColor = {r=1, g=1, b=1, a=0.1}
     self:addChild(self.btnRedefine)
 
-    self.btnRedefine.infos = {}
-    self.btnRedefine.infos.posX = btnPosX_redefine
-    self.btnRedefine.infos.posX = btnPosY_redefine
-    self.btnRedefine.infos.posX = btnWidth_redefine
-    self.btnRedefine.infos.posX = btnHeight_redefine
+    z = self:getHeight() - borderPad - self.btnOk:getHeight() - 2 * btnPad - ISAddNonPvpZoneUI.FONT_HGT_SMALL
 
-    local entryBoxText_title = "Zone #" .. NonPvpZone.getAllZones():size() + 1
-    local entryBoxText_render = tostring(DEFAULT_RENDER_DISTANCE)
+    local lblRenderDistance_text = getText("IGUI_PvpZone_RenderDistance")
+    self.lblRenderDistance = ISLabel:new(borderPad, z, ISAddNonPvpZoneUI.FONT_HGT_SMALL, lblRenderDistance_text, 1, 1, 1, 1, UIFont.Small, true)
+    self.lblRenderDistance:initialise()
+    self:addChild(self.lblRenderDistance)
 
-    self.titleEntry = ISTextEntryBox:new(entryBoxText_title, 10, 10, self:getWidth()/2 - 10, FONT_HGT_SMALL + 2 * 2)
-    self.titleEntry:initialise()
-    self.titleEntry:instantiate()
-    self:addChild(self.titleEntry)
-
-    self.renderDistanceEntry= ISTextEntryBox:new(entryBoxText_render, 10, 10, self:getWidth()/4 - 10, FONT_HGT_SMALL + 2 * 2)
-    self.renderDistanceEntry:initialise()
-    self.renderDistanceEntry:instantiate()
-    self.renderDistanceEntry:setTooltip(getText("IGUI_PvpZone_RenderDistance_tooltip"))
-    self:addChild(self.renderDistanceEntry)
+    local entryBoxText_render = tostring(ISAddNonPvpZoneUI.DEFAULT_RENDER_DISTANCE)
+    self.entryBoxRenderDistance= ISTextEntryBox:new(entryBoxText_render, self:getWidth()/2, z, self:getWidth()/2 - borderPad - self.btnCancel:getWidth() - btnPad + 3, ISAddNonPvpZoneUI.FONT_HGT_SMALL)
+    self.entryBoxRenderDistance:initialise()
+    self.entryBoxRenderDistance:instantiate()
+    self.entryBoxRenderDistance:setTooltip(getText("IGUI_PvpZone_RenderDistance_tooltip"))
+    self:addChild(self.entryBoxRenderDistance)
 end
 
 function ISAddNonPvpZoneUI:prerender()
-    local z = 20
-    local splitPoint = 200
-    local x = 10
+    local playerX = math.floor(self.player:getX())
+    local playerY = math.floor(self.player:getY())
 
-    -- Desenha o fundo e a borda do painel
     self:drawRect(0, 0, self.width, self.height, self.backgroundColor.a, self.backgroundColor.r, self.backgroundColor.g, self.backgroundColor.b)
     self:drawRectBorder(0, 0, self.width, self.height, self.borderColor.a, self.borderColor.r, self.borderColor.g, self.borderColor.b)
 
-    -- Desenha o texto do título
-    self:drawText(string.upper(getText("IGUI_PvpZone_AddZone")), self.width/2 - (getTextManager():MeasureStringX(UIFont.Medium, string.upper(getText("IGUI_PvpZone_AddZone"))) / 2), z, 1, 1, 1, 1, UIFont.Medium)
-
-    z = z + FONT_HGT_MEDIUM + 20
-
-    -- Desenha o texto do nome da zona e posiciona a entrada de texto
-    self:drawText(getText("IGUI_PvpZone_ZoneName"), x, z + 2, 1, 1, 1, 1, UIFont.Small)
-    self.titleEntry:setY(z)
-    self.titleEntry:setX(splitPoint)
-
-    z = z + FONT_HGT_SMALL + 15
-
-    -- Desenha o ponto inicial e suas coordenadas
-    self:drawText(getText("IGUI_PvpZone_StartingPoint"), x, z, 1, 1, 1, 1, UIFont.Small)
-    self:drawText(luautils.round(self.startingX, 0) .. " x " .. luautils.round(self.startingY, 0), splitPoint, z, 1, 1, 1, 1, UIFont.Small)
-
-    z = z + FONT_HGT_SMALL + 15
-
-    -- Desenha o ponto atual e suas coordenadas
-    self:drawText(getText("IGUI_PvpZone_CurrentPoint"), x, z, 1, 1, 1, 1, UIFont.Small)
-    self:drawText(luautils.round(self.player:getX(), 0) .. " x " .. luautils.round(self.player:getY(), 0), splitPoint, z, 1, 1, 1, 1, UIFont.Small)
-
-    z = z + FONT_HGT_SMALL + 15
-
-    -- Calcula e desenha o tamanho da zona
-    local playerX = math.floor(self.player:getX())
-    local playerY = math.floor(self.player:getY())
+    self.lblStartingPointInfo:setName("x = " .. tostring(self.startingX) .. ", y = " .. tostring(self.startingY))
+    self.lblCurrentPointInfo:setName("x = " .. tostring(playerX) .. ", y = " .. tostring(playerY))
 
     local startingX = self.startingX
     local startingY = self.startingY
     local endX = playerX
     local endY = playerY
 
-    -- Garante que startingX seja menor ou igual a endX e startingY seja menor ou igual a endY
     if startingX > endX then
         local x2 = endX
         endX = startingX
@@ -163,57 +153,49 @@ function ISAddNonPvpZoneUI:prerender()
         startingY = y2
     end
 
-    -- Calcula a largura e altura da zona
     local width = math.abs(startingX - endX) + 1
     local height = math.abs(startingY - endY) + 1
-    self:drawText(getText("IGUI_PvpZone_CurrentZoneSize"), x, z, 1, 1, 1, 1, UIFont.Small)
     self.size = width * height
-    self:drawText(self.size .. "", splitPoint, z, 1, 1, 1, 1, UIFont.Small)
+    self.lblCurrentSizeInfo:setName(tostring(self.size))
 
-    z = self:getHeight() - self.btnOk.infos.height - 40
+    local renderDistance = tonumber(self.entryBoxRenderDistance:getInternalText())
+    local renderDistanceOK = renderDistance and renderDistance < ISAddNonPvpZoneUI.MAX_RENDER_DISTANCE
+    local radius = renderDistanceOK and renderDistance or ISAddNonPvpZoneUI.DEFAULT_RENDER_DISTANCE
+    self.entryBoxRenderDistance:setValid(renderDistanceOK)
 
-    local renderDistance = tonumber(self.renderDistanceEntry:getInternalText())
-    local renderDistanceOK = renderDistance and renderDistance < MAX_RENDER_DISTANCE
-    local radius = renderDistanceOK and renderDistance or DEFAULT_RENDER_DISTANCE
-
-    self:drawText(getText("IGUI_PvpZone_RenderDistance"), x, z + 2, 1, 1, 1, 1, UIFont.Small)
-    self.renderDistanceEntry:setValid(renderDistanceOK)
-    self.renderDistanceEntry:setY(z)
-    self.renderDistanceEntry:setX(splitPoint)
-
-    -- Destaca objetos dentro da zona se a largura ou altura forem menores que 100
     local minX = math.max(playerX - radius, startingX)
     local maxX = math.min(playerX + radius, endX)
     local minY = math.max(playerY - radius, startingY)
     local maxY = math.min(playerY + radius, endY)
 
-    for x2 = minX, maxX do
-        for y = minY, maxY do
-            if isWithinDistance(x2, y, playerX, playerY, radius) then
-                local sq = getCell():getGridSquare(x2, y, 0)
-                if sq then
-                    for n = 0, sq:getObjects():size() - 1 do
-                        local obj = sq:getObjects():get(n)
-                        obj:setHighlighted(true)
-                        obj:setHighlightColor(0.3, 1, 0.3, 0.75)
+    if radius >= 0 then
+        for x2 = minX, maxX do
+            for y = minY, maxY do
+                if isWithinDistance(x2, y, playerX, playerY, radius) then
+                    local sq = getCell():getGridSquare(x2, y, 0)
+                    if sq then
+                        for n = 0, sq:getObjects():size() - 1 do
+                            local obj = sq:getObjects():get(n)
+                            obj:setHighlighted(true)
+                            obj:setHighlightColor(0.6, 1, 0.6, 0.5)
+                        end
                     end
                 end
             end
         end
     end
+
     self:updateButtons()
-    --print("NonPvp - " .. "S: " .. tostring(self.startingX) .. " x " .. tostring(self.startingY))
-    --print("NonPvp - " .. "E: " .. tostring(playerX) .. " x " .. tostring(playerY))
 end
 
 function ISAddNonPvpZoneUI:updateButtons()
-    self.btnOk.enable = self.size > 1;
+    self.btnOk.enable = self.size > 1
 end
 
 function ISAddNonPvpZoneUI:onClick(button)
     if button.internal == "OK" then
         local doneIt = true
-        if NonPvpZone.getZoneByTitle(self.titleEntry:getInternalText()) then
+        if NonPvpZone.getZoneByTitle(self.entryBoxTitle:getInternalText()) then
             doneIt = false
             local modal = ISModalDialog:new(0, 0, 350, 150, getText("IGUI_PvpZone_ZoneAlreadyExistTitle", self.selectedPlayer), false, nil, nil)
             modal:initialise()
@@ -241,7 +223,7 @@ function ISAddNonPvpZoneUI:onClick(button)
                 y2 = temp
             end
 
-            NonPvpZone.addNonPvpZone(self.titleEntry:getInternalText(), x1, y1, x2 + 1, y2 + 1)
+            NonPvpZone.addNonPvpZone(self.entryBoxTitle:getInternalText(), x1, y1, x2 + 1, y2 + 1)
         else
             return
         end
@@ -276,7 +258,7 @@ function ISAddNonPvpZoneUI:new(x, y, width, height, player)
     end
 
     o.borderColor = {r=0.4, g=0.4, b=0.4, a=1}
-    o.backgroundColor = {r=0, g=0, b=0, a=0.8}
+    o.backgroundColor = {r=0, g=0, b=0, a=0.75}
     o.width = width
     o.height = height
 

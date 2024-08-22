@@ -1,4 +1,4 @@
 IGUI_EN = {
     IGUI_PvpZone_RenderDistance = "Render Distance:",
-    IGUI_PvpZone_RenderDistance_tooltip = "Sets the render distance to avoid freezing. <LINE> Maximum value: 100",
+    IGUI_PvpZone_RenderDistance_tooltip = "Set the render distance to avoid freezing. <LINE><LINE> Maximum value: 100 <LINE> Mark only the current square: 0 <LINE> Disable: -1",
 }
