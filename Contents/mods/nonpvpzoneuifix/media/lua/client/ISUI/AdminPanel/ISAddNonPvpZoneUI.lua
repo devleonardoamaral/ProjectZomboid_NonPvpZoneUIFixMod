@@ -13,14 +13,32 @@ ISAddNonPvpZoneUI = ISPanel:derive("ISAddNonPvpZoneUI")
 ISAddNonPvpZoneUI.FONT_HGT_SMALL = getTextManager():getFontHeight(UIFont.Small)
 ISAddNonPvpZoneUI.FONT_HGT_MEDIUM = getTextManager():getFontHeight(UIFont.Medium)
 ISAddNonPvpZoneUI.MAX_RENDER_DISTANCE = 101
-ISAddNonPvpZoneUI.DEFAULT_RENDER_DISTANCE = 60
+ISAddNonPvpZoneUI.DEFAULT_RENDER_DISTANCE = 70
 
 local function calculateEuclideanDistance(x1, y1, x2, y2)
     return math.sqrt((x2 - x1)^2 + (y2 - y1)^2)
 end
 
-local function isWithinDistance(x, y, centerX, centerY, maxDistance)
+local function isWithinEuclideanDistance(x, y, centerX, centerY, maxDistance)
     return calculateEuclideanDistance(x, y, centerX, centerY) <= maxDistance
+end
+
+local function calculateManhattanDistance(x1, y1, x2, y2)
+    local x = math.abs(x1 - x2)
+    local y = math.abs(y1 - y2)
+    return math.abs(x + y)
+end
+
+local function isWithinManhattanDistance(x, y, centerX, centerY, maxDistance)
+    return calculateManhattanDistance(x, y, centerX, centerY) <= maxDistance
+end
+
+function ISAddNonPvpZoneUI:onChoseRenderType(choose, test1, test)
+    print(tostring(test1))
+    print(tostring(test2))
+    for i, v in pairs(choose) do
+        print(tostring(i), tostring(v))
+    end
 end
 
 function ISAddNonPvpZoneUI:initialise()
@@ -132,6 +150,19 @@ function ISAddNonPvpZoneUI:initialise()
     self.entryBoxRenderDistance:instantiate()
     self.entryBoxRenderDistance:setTooltip(getText("IGUI_PvpZone_RenderDistance_tooltip"))
     self:addChild(self.entryBoxRenderDistance)
+
+    z = z - ISAddNonPvpZoneUI.FONT_HGT_SMALL - 15
+
+    local lblRenderType_text = getText("IGUI_PvpZone_RenderCalc")
+    self.lblRenderType = ISLabel:new(borderPad, z, ISAddNonPvpZoneUI.FONT_HGT_SMALL, lblRenderType_text, 1, 1, 1, 1, UIFont.Small, true)
+    self.lblRenderType:initialise()
+    self:addChild(self.lblRenderType)
+
+    self.comboBoxRenderType = ISComboBox:new(self:getWidth()/2, z, self:getWidth()/2 - borderPad, btnHeight, self, ISAddNonPvpZoneUI.onChoseRenderType, ISAddNonPvpZoneUI.onChoseRenderType, ISAddNonPvpZoneUI.onChoseRenderType)
+    self.comboBoxRenderType:initialise()
+    self.comboBoxRenderType:addOptionWithData("Euclidean", isWithinEuclideanDistance)
+    self.comboBoxRenderType:addOptionWithData("Manhattan", isWithinManhattanDistance)
+    self:addChild(self.comboBoxRenderType)
 end
 
 function ISAddNonPvpZoneUI:prerender()
@@ -163,7 +194,7 @@ function ISAddNonPvpZoneUI:prerender()
     local width = math.abs(startingX - endX) + 1
     local height = math.abs(startingY - endY) + 1
     self.size = width * height
-    self.lblCurrentSizeInfo:setName(tostring(self.size))
+    self.lblCurrentSizeInfo:setName(tostring(self.size) .. " (x = " .. tostring(math.abs(startingX - endX) + 1) .. ", y = " .. tostring(math.abs(startingY - endY) + 1) .. ")")
 
     local renderDistance = tonumber(self.entryBoxRenderDistance:getInternalText())
     local renderDistanceOK = renderDistance and renderDistance < ISAddNonPvpZoneUI.MAX_RENDER_DISTANCE
@@ -178,7 +209,7 @@ function ISAddNonPvpZoneUI:prerender()
     if radius >= 0 then
         for x2 = minX, maxX do
             for y = minY, maxY do
-                if isWithinDistance(x2, y, playerX, playerY, radius) then
+                if self.comboBoxRenderType:getOptionData(self.comboBoxRenderType.selected)(x2, y, playerX, playerY, radius) then
                     local sq = getCell():getGridSquare(x2, y, 0)
                     if sq then
                         for n = 0, sq:getObjects():size() - 1 do
