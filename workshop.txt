@@ -1,23 +1,23 @@
 version=1
 id=3314079570
 title=Non-PvP Zone UI Freezing Fix
-description=[h1] How does it work? [/h1]
-description=This mod fixes the freezing issue when creating larger non-PvP zones by limiting the rendering of off-screen squares (customizable in the UI).
-description=
-description=[h1] This mod is incompatible with... [/h1]
-description=This mod should not present incompatibilities with other mods, however in conjunction with other mods that override the UI of creating non-PvP zones may cause the mod to not work correctly.
-description=
-description=[h1]Copyright and attribution[/h1]
-description=
-description=[url=https://theindiestone.com/forums/index.php/topic/2530-mod-permissions/?p=36478][img] https://i.imgur.com/aeLxu2C.png[/img][/url][quote] This mod can be added to and extended by anyone in the community, but credit must be given to the original author within the files of the mod - and posted alongside the mod wherever it roams.[/quote]
-description=
-description=[h1]How to support me:[/h1]
-description=
-description=By supporting me, you help ensure that I can continue to create, enhance, and develop more mods like this for the community. Thank you in advance!
-description=
-description=[url=https://ko-fi.com/V7V0Y4HE7][img]https://storage.ko-fi.com/cdn/kofi3.png?v=3[/img][/url]
-description=[url=https://nubank.com.br/cobrar/392jm/66c67967-bb1c-43e3-90af-ca1794be2d12][img]https://i.imgur.com/gZTfNsZ.png[/img][/url]
-description=
+description=[h1] How does it work? [/h1]
+description=This mod fixes the freezing issue when creating larger non-PvP zones by limiting the rendering of off-screen squares (customizable in the UI).
+description=
+description=[h1] This mod is incompatible with... [/h1]
+description=This mod should not present incompatibilities with other mods, however in conjunction with other mods that override the UI of creating non-PvP zones may cause the mod to not work correctly.
+description=
+description=[h1]Copyright and attribution[/h1]
+description=
+description=[url=https://theindiestone.com/forums/index.php/topic/2530-mod-permissions/?p=36478][img] https://i.imgur.com/aeLxu2C.png[/img][/url][quote] This mod can be added to and extended by anyone in the community, but credit must be given to the original author within the files of the mod - and posted alongside the mod wherever it roams.[/quote]
+description=
+description=[h1]How to support me:[/h1]
+description=
+description=By supporting me, you help ensure that I can continue to create, enhance, and develop more mods like this for the community. Thank you in advance!
+description=
+description=[url=https://ko-fi.com/V7V0Y4HE7][img]https://storage.ko-fi.com/cdn/kofi3.png?v=3[/img][/url]
+description=[url=https://nubank.com.br/cobrar/392jm/66c67967-bb1c-43e3-90af-ca1794be2d12][img]https://i.imgur.com/gZTfNsZ.png[/img][/url]
+description=
 description=Translated into EN and PTBR.
 tags=Build 41;Interface;Multiplayer
 visibility=public
