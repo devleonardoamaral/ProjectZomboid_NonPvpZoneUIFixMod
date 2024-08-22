@@ -1,0 +1,15 @@
+version=1
+id=3314079570
+title=Non-PvP Zone UI Freezing Fix
+description=[h1] How does it work? [/h1]
+description=This mod fixes the freezing issue when creating larger non-PvP zones by limiting the rendering of off-screen squares (customizable in the UI).
+description=
+description=[h1] This mod is incompatible with... [/h1]
+description=This mod should not present incompatibilities with other mods, however in conjunction with other mods that override the UI of creating non-PvP zones may cause the mod to not work correctly.
+description=
+description=[h1]Copyright and attribution[/h1]
+description=You do not need to credit the author to use this mod, but you must give credit if you edit or repost this mod on the Workshop or through other platforms.
+description=
+description=Translated into EN and PTBR.
+tags=Build 41;Interface;Multiplayer
+visibility=public

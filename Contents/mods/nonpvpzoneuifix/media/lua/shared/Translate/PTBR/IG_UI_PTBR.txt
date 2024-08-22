@@ -1,0 +1,4 @@
+IGUI_PTBR = {
+    IGUI_PvpZone_RenderDistance = "Distância de Renderização:",
+    IGUI_PvpZone_RenderDistance_tooltip = "Define a distância de renderização para evitar congelamentos. <LINE> Valor máximo: 100",
+}
