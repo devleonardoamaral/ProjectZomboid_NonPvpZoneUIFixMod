@@ -280,7 +280,6 @@ function ISAddNonPvpZoneUI:onClick(button)
 end
 
 function ISAddNonPvpZoneUI:save()
-    print("Saved!")
     local currentRenderDistance = tonumber(self.entryBoxRenderDistance:getInternalText())
     local renderDistance =  currentRenderDistance and tostring(currentRenderDistance) or tostring(ISAddNonPvpZoneUI.DEFAULT_RENDER_DISTANCE)
     local renderType = self.comboBoxRenderType:getSelectedText()
