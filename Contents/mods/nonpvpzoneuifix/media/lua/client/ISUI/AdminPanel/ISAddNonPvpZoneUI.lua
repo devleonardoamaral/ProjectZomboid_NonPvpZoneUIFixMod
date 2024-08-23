@@ -1,11 +1,11 @@
 -- ┓ ┏┓┏┓┳┓┏┓┳┓┳┓┏┓  ┏┓┳┳┓┏┓┳┓┏┓┓ 
 -- ┃ ┣ ┃┃┃┃┣┫┣┫┃┃┃┃  ┣┫┃┃┃┣┫┣┫┣┫┃ 
 -- ┗┛┗┛┗┛┛┗┛┗┛┗┻┛┗┛  ┛┗┛ ┗┛┗┛┗┛┗┗┛
--- Modified: 22/08/2024, 12:30 (UTC/GMT -03:00) 
+-- Modified: 23/08/2024, 11:00 (UTC/GMT -03:00) 
 -- Version: 2.0
 
 -- Relevant console commands:
--- - reloadLuaFile("nonpvpzoneuifix/media/lua/client/ISUI/AdminPanel/ISAddNonPvpZoneUI.lua")
+-- - reloadLuaFile("./media/lua/client/ISUI/AdminPanel/ISAddNonPvpZoneUI.lua")
 
 require "ISUI/AdminPanel/ISLabel"
 
@@ -33,12 +33,8 @@ local function isWithinManhattanDistance(x, y, centerX, centerY, maxDistance)
     return calculateManhattanDistance(x, y, centerX, centerY) <= maxDistance
 end
 
-function ISAddNonPvpZoneUI:onChoseRenderType(choose, test1, test)
-    print(tostring(test1))
-    print(tostring(test2))
-    for i, v in pairs(choose) do
-        print(tostring(i), tostring(v))
-    end
+function ISAddNonPvpZoneUI:onChooseRenderType()
+    self:save()
 end
 
 function ISAddNonPvpZoneUI:initialise()
@@ -149,6 +145,7 @@ function ISAddNonPvpZoneUI:initialise()
     self.entryBoxRenderDistance:initialise()
     self.entryBoxRenderDistance:instantiate()
     self.entryBoxRenderDistance:setTooltip(getText("IGUI_PvpZone_RenderDistance_tooltip"))
+    self.entryBoxRenderDistance.onTextChange = function () self:save() end
     self:addChild(self.entryBoxRenderDistance)
 
     z = z - ISAddNonPvpZoneUI.FONT_HGT_SMALL - 15
@@ -158,11 +155,13 @@ function ISAddNonPvpZoneUI:initialise()
     self.lblRenderType:initialise()
     self:addChild(self.lblRenderType)
 
-    self.comboBoxRenderType = ISComboBox:new(self:getWidth()/2, z, self:getWidth()/2 - borderPad, btnHeight, self, ISAddNonPvpZoneUI.onChoseRenderType, ISAddNonPvpZoneUI.onChoseRenderType, ISAddNonPvpZoneUI.onChoseRenderType)
+    self.comboBoxRenderType = ISComboBox:new(self:getWidth()/2, z, self:getWidth()/2 - borderPad, btnHeight, self, ISAddNonPvpZoneUI.onChooseRenderType, nil, nil)
     self.comboBoxRenderType:initialise()
     self.comboBoxRenderType:addOptionWithData("Euclidean", isWithinEuclideanDistance)
     self.comboBoxRenderType:addOptionWithData("Manhattan", isWithinManhattanDistance)
     self:addChild(self.comboBoxRenderType)
+
+    self:load()
 end
 
 function ISAddNonPvpZoneUI:prerender()
@@ -278,6 +277,34 @@ function ISAddNonPvpZoneUI:onClick(button)
     self.parentUI:populateList()
     self.parentUI:setVisible(true)
     self.player:setSeeNonPvpZone(false)
+end
+
+function ISAddNonPvpZoneUI:save()
+    print("Saved!")
+    local currentRenderDistance = tonumber(self.entryBoxRenderDistance:getInternalText())
+    local renderDistance =  currentRenderDistance and tostring(currentRenderDistance) or tostring(ISAddNonPvpZoneUI.DEFAULT_RENDER_DISTANCE)
+    local renderType = self.comboBoxRenderType:getSelectedText()
+    local fileWriter = getFileWriter("nonpvpzoneuifix_data.txt", true, false)
+    fileWriter:writeln("renderDistance=" .. tostring(renderDistance))
+    fileWriter:writeln("renderType=" .. renderType)
+    fileWriter:close()
+end
+
+function ISAddNonPvpZoneUI:load()
+    local fileReader = getFileReader("nonpvpzoneuifix_data.txt", true)
+    local line = fileReader:readLine()
+
+    while line do
+        local key, value = string.match(line, "(%w+)=(%w+)")
+        if key == "renderDistance" then
+            self.entryBoxRenderDistance:setText(value)
+        elseif key == "renderType" then
+            self.comboBoxRenderType:select(value)
+        end
+        line = fileReader:readLine()
+    end
+
+    fileReader:close()
 end
 
 function ISAddNonPvpZoneUI:new(x, y, width, height, player)
